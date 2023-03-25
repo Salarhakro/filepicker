@@ -1,33 +1,53 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main(List<String> args) {
-  runApp(MyApp());
+  runApp(Add());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class Add extends StatefulWidget {
+  const Add({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<Add> createState() => _AddState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AddState extends State<Add> {
+  File? imageFile;
+
+  void selectFile() async {
+    XFile? file = await ImagePicker().pickImage(
+        source: ImageSource.gallery, maxHeight: 1800, maxWidth: 1800);
+
+    if (file != null) {
+      setState(() {
+        imageFile = File(file.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('File Picker'),
-        ),
-        body: Column(
+        body: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('hello'),
-            Text('hello'),
-            Text('hello'),
-            Text('hello'),
+            if (imageFile != null)
+              Expanded(
+                child: Container(
+                  child: Image.file(
+                    File(imageFile!.path),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ElevatedButton(
+                onPressed: selectFile, child: const Text('Select file'))
           ],
-        ),
+        )),
       ),
     );
   }
